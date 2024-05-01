@@ -1,13 +1,13 @@
 # Use Railway.app compatible base image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-EXPOSE 3000  # Expose the port used by Railway.app
+EXPOSE 3000 
 
-ENV ASPNETCORE_URLS=http://+:3000  # Configure ASP.NET Core URLs
-ENV ASPNETCORE_ENVIRONMENT=Production  # Set ASP.NET Core environment to Production
+ENV ASPNETCORE_URLS="http://+:3000" 
+ENV ASPNETCORE_ENVIRONMENT="Production" 
 
 # Set any additional environment variables required by Railway.app
-# ENV RAILWAY_ENV=production
+# ENV RAILWAY_ENV="production"
 
 # Build Stage
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
