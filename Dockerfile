@@ -1,29 +1,29 @@
-# Use Railway.app compatible base image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-EXPOSE 3000 
+EXPOSE 7124
 
-ENV ASPNETCORE_URLS="http://+:3000" 
-ENV ASPNETCORE_ENVIRONMENT="Production" 
+ENV ASPNETCORE_URLS=http://+:7124
+ENV ASPNETCORE_ENVIRONMENT=Development
 
-# Set any additional environment variables required by Railway.app
-# ENV RAILWAY_ENV="production"
-
-# Build Stage
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+ARG configuration=Release
 WORKDIR /src
+
 COPY ["5s.csproj", "./"]
+
 RUN dotnet restore "./5s.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "5s.csproj" -c Release -o /app/build
 
-# Publish Stage
+# Specify a different output directory for the build artifacts
+RUN dotnet build "5s.csproj" -c $configuration -o /app/
+
 FROM build AS publish
-RUN dotnet publish "5s.csproj" -c Release -o /app/publish
+ARG configuration=Release
 
-# Final Stage
+RUN dotnet publish "5s.csproj" -c $configuration -o /app
+
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "5s.dll"]
